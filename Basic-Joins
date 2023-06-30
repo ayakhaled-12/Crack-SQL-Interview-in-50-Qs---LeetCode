@@ -1,0 +1,87 @@
+1378. Replace Employee ID With The Unique Identifier
+# Write your MySQL query statement below
+
+
+SELECT 
+ eu.unique_id , e.name
+FROM Employees as e 
+LEFT JOIN EmployeeUNI eu
+ON e.id = eu.id
+------------------------------------------------------------------
+1068. Product Sales Analysis I
+# Write your MySQL query statement below
+
+SELECT 
+  p.product_name , 
+  s.year,
+  s.price
+FROM Sales s 
+LEFT JOIN Product p 
+ON s.product_id = p.product_id
+------------------------------------------------------------------
+1581. Customer Who Visited but Did Not Make Any Transactions
+# Write your MySQL query statement below
+
+SELECT 
+customer_id , 
+COUNT(v.visit_id) count_no_trans
+FROM Visits v 
+LEFT JOIN Transactions t 
+ON v.visit_id = t.visit_id
+WHERE t.transaction_id IS NULL
+GROUP BY customer_id
+------------------------------------------------------------------
+197. Rising Temperature
+# Write your MySQL query statement below
+
+
+with cte as ( 
+SELECT 
+id ,
+temperature, 
+recordDate,
+LAG(recordDate) OVER(ORDER BY recordDate) as prev_recordDate,
+LAG(temperature) OVER(ORDER BY recordDate) as prev_temperature
+FROM Weather 
+) 
+
+SELECT id
+ FROM cte
+ where datediff(recordDate,prev_recordDate) = 1 
+ and temperature > prev_temperature
+------------------------------------------------------------------
+1661. Average Time of Process per Machine
+# Write your MySQL query statement below
+
+with cte as 
+( 
+-- need to group total time by the process to get 1 aggregate value for start_time and 1 agg value for end_time 
+    SELECT 
+        machine_id , 
+        process_id,
+        SUM(CASE WHEN activity_type = 'start' 
+          THEN IFNULL(timestamp,0) 
+          ELSE 0
+          END) as start_timestamp,
+        SUM(CASE WHEN activity_type = 'end'   
+          THEN IFNULL(timestamp,0) 
+          ELSE 0 
+          END) as end_timestamp
+    FROM Activity
+    GROUP BY 
+        machine_id , 
+        process_id
+)
+-- need to group total time by the process to get 1 aggregate value for start_time and 1 agg value for end_time 
+, 
+total_time as ( 
+SELECT 
+    machine_id,
+    process_id,
+    end_timestamp - start_timestamp as total_time_per_process
+   FROM cte ) 
+SELECT 
+    machine_id , 
+    round(sum(total_time_per_process) / count(process_id),3) as processing_time
+ from  total_time
+ GROUP BY machine_id 
