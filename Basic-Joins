@@ -96,3 +96,15 @@ FROM Employee e
 LEFT JOIN Bonus b 
 ON e.empId = b.empId
 WHERE  IFNULL(b.bonus,0) < 1000
+
+------------------------------------------------------------------
+570. Managers with at Least 5 Direct Reports
+# Write your MySQL query statement below
+
+SELECT 
+   distinct  e.name  
+FROM Employee m  
+INNER JOIN Employee e 
+ON m.managerId = e.id 
+GROUP BY m.managerId
+HAVING  count(m.id) >= 5 
