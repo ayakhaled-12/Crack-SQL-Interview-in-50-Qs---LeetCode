@@ -85,3 +85,14 @@ SELECT
     round(sum(total_time_per_process) / count(process_id),3) as processing_time
  from  total_time
  GROUP BY machine_id 
+------------------------------------------------------------------
+577. Employee Bonus
+# Write your MySQL query statement below
+
+SELECT 
+ e.name , 
+ b.bonus 
+FROM Employee e 
+LEFT JOIN Bonus b 
+ON e.empId = b.empId
+WHERE  IFNULL(b.bonus,0) < 1000
