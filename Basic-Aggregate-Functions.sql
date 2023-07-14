@@ -42,4 +42,4 @@ SELECT
      round(sum(poor_query_flag) * 100 / count(*),2)   poor_query_percentage
 FROM cte
 GROUP BY query_name
-
+-------------------------------------
